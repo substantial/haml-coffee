@@ -208,6 +208,7 @@ Options:
   -b, --basename                     Ignore file path when generate the template name
   -e, --extend                       Extend the template scope with the context
   -r, --render                       Render to standalone HTML
+  --context                          Set an object used to generate standalone HTML with dynamic content
 ```
 
 _The following section describes only the options that are unique to the command line tool._
@@ -312,6 +313,53 @@ which will output the JST source code. Now you can also redirect files like:
 
 ```bash
 $ haml-coffee -t name < input.hamlc > output.jst
+```
+
+
+#### Standalone HTML
+
+Any template can be rendered to static html.
+
+To render a static template to html you will need to supply the `-r`/`--render`
+argument:
+
+```hamlc
+.foo
+```
+
+```bash
+$ haml-coffee -i template.haml -r
+```
+
+Result:
+
+```html
+<div class='foo'></div>
+```
+
+To render a dynamic template to html you will need to supply an additional argument to specify the data context
+for the template `--context=`. Context can be any valid JSON as a string.
+
+template.hamlc
+
+```hamlc
+.foo=@name
+.baz
+  - for item in @items
+    .item= item
+```
+
+```bash
+$ haml-coffee -i template.hamlc -r --context='{"name": "derp", "items": ["foo", "bar"]}'
+```
+
+Result:
+```html
+<div class='foo'>derp</div>
+<div class='baz'>
+  <div class='item'>foo</div>
+  <div class='item'>bar</div>
+</div>
 ```
 
 ## Haml support

@@ -123,6 +123,10 @@ optimist = require('optimist')
     default   : ''
     describe  : 'Set the custom object reference function name'
   )
+  .options('context',
+    default: '{}'
+    describe: 'Hash context for compiling templates'
+  )
 
 # Main function to run from console. This can either compile a single Haml Coffee template,
 # compile a directory of Haml Coffee templates into several JavaScript templates or a directory
@@ -163,6 +167,7 @@ exports.run = ->
     customPrecede         : argv['custom-precede']
     customReference       : argv['custom-reference']
     basename              : argv['basename']
+    context               : JSON.parse(argv['context'])
 
   if inputFilename
     fs.stat inputFilename, (err, stat) ->

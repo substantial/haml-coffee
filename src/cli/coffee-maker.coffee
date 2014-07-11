@@ -102,8 +102,23 @@ module.exports = class CoffeeMaker
     output
 
   @renderFile = (filename, compilerOptions = {}) ->
-    fn = @compileFile filename, compilerOptions
-    eval(fn)()
+    try
+      source = fs.readFileSync(filename).toString()
+    catch error
+      console.error "  #{ red }Error opening file:#{ reset } %s", error
+      console.error error
+      process.exit 1
+
+    try
+      compiler = new HamlCoffee(compilerOptions)
+      compiler.parse source
+    catch error
+      console.error "  #{ red }[haml coffee] error compiling Haml file:#{ reset } %s", error
+      console.error error.stack
+      process.exit 1
+
+    template = new Function CoffeeScript.compile(compiler.precompile(), bare: true)
+    template.call compilerOptions.context
 
   @render = (source, compilerOptions = {}) ->
     fn = @compile source, 'test', null, compilerOptions
